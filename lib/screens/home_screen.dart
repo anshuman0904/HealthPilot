@@ -8,14 +8,23 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: kBackgroundColor,
-      body: SafeArea(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color.fromARGB(255, 216, 255, 254),
+              const Color.fromARGB(255, 233, 246, 255),
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
         child: Padding(
           padding: const EdgeInsets.all(kDefaultPadding),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const SizedBox(height: 40),
+              const SizedBox(height: 70),
               // App Logo or Icon
               Center(
                 child: Container(
