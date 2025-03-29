@@ -52,7 +52,7 @@ class _PredictionScreenState extends State<PredictionScreen> {
     try {
       final result = await _predictor.predictDisease(symptoms);
       final additionalDetails =
-          await _predictor.getAdditionalDetails(result['disease']);
+          await _predictor.getAdditionalDetails(result['disease'], symptoms);
       if (!mounted) return;
 
       Navigator.push(
@@ -87,10 +87,10 @@ class _PredictionScreenState extends State<PredictionScreen> {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
             gradient: LinearGradient(
-              colors:[
-              Color.fromARGB(255, 216, 255, 254),
-              const Color.fromARGB(255, 233, 246, 255),
-            ],
+              colors: [
+                Color.fromARGB(255, 216, 255, 254),
+                const Color.fromARGB(255, 233, 246, 255),
+              ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),

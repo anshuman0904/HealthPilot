@@ -91,14 +91,15 @@ class DiseasePredictor {
     }
   }
 
-  Future<Map<String, dynamic>> getAdditionalDetails(String disease) async {
+  Future<Map<String, dynamic>> getAdditionalDetails(
+      String disease, String symptoms) async {
     const String apiKey = 'AIzaSyA4ZZBSycwHtvnHMviFXapRLTLg9sG4GyA';
 
     try {
       final model = GenerativeModel(model: 'gemini-2.0-flash', apiKey: apiKey);
       final content = [
         Content.text("""
-        You are a medical assistant. Provide structured information about "$disease":
+        You are a medical assistant. Provide structured information about "$disease" having symptoms "$symptoms".:
 
         "\n\nInclude:"
         "\n1. Recommended Medicine"
@@ -111,8 +112,9 @@ class DiseasePredictor {
         "\nDiet: [list]"
         "\nWorkout: [list]"
         1. output should be in the format of list of items in square brackets.
-        2. in Recommended Medicine give name of medicines along with recommended schedule , like two times a day etc.
+        2. in Recommended Medicine give name of medicines to be taken along with recommended schedule , like two times a day etc.
         3. Respond ONLY in this format with short sentences strictly without introductions and disclaimers.
+        4. do not forget to add newline character '\n' at end of each list item except the last one.
       """)
       ];
 
@@ -135,7 +137,6 @@ class DiseasePredictor {
     }
   }
 
-
   Map<String, dynamic> _parseResponse(String rawResponse) {
     final Map<String, dynamic> parsedResponse = {};
 
@@ -152,16 +153,16 @@ class DiseasePredictor {
 
     // Split extracted sections into lists of items
     parsedResponse['Medicines'] = medicineMatch != null
-        ? medicineMatch.group(1)?.split(',').map((e) => e.trim()).toList()
+        ? medicineMatch.group(1)?.split('\n').map((e) => e.trim()).toList()
         : ['No data available'];
     parsedResponse['Precautions'] = precautionsMatch != null
-        ? precautionsMatch.group(1)?.split(',').map((e) => e.trim()).toList()
+        ? precautionsMatch.group(1)?.split('\n').map((e) => e.trim()).toList()
         : ['No data available'];
     parsedResponse['Diet'] = dietMatch != null
-        ? dietMatch.group(1)?.split(',').map((e) => e.trim()).toList()
+        ? dietMatch.group(1)?.split('\n').map((e) => e.trim()).toList()
         : ['No data available'];
     parsedResponse['Workout'] = workoutMatch != null
-        ? workoutMatch.group(1)?.split(',').map((e) => e.trim()).toList()
+        ? workoutMatch.group(1)?.split('\n').map((e) => e.trim()).toList()
         : ['No data available'];
 
     return parsedResponse;
