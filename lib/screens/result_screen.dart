@@ -21,56 +21,67 @@ class ResultScreen extends StatelessWidget {
         List<Map<String, dynamic>>.from(result['topPredictions'] ?? []);
 
     return Scaffold(
-        appBar: AppBar(
-            title: const Text('Prediction Results'),
-            backgroundColor: const Color.fromARGB(255, 191, 228, 254)),
-        body: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            gradient: LinearGradient(
-              colors: [
-                Color.fromARGB(255, 217, 239, 244),
-                const Color.fromARGB(255, 230, 239, 255),
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+      appBar: AppBar(
+        title: const Text('Prediction Results'),
+        backgroundColor: const Color.fromARGB(255, 191, 228, 254),
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                gradient: LinearGradient(
+                  colors: [
+                    Color.fromARGB(255, 217, 239, 244),
+                    const Color.fromARGB(255, 230, 239, 255),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(kDefaultPadding),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _buildPredictionCard(disease, confidence),
+                    if (topPredictions.length > 1)
+                      _buildOtherConditions(topPredictions),
+                    _buildSection(
+                        'Your Symptoms', symptoms), // Single string section
+                    _buildListSection(
+                      'Recommended Medicines',
+                      recommendations['Medicines'] ??
+                          ['No recommendations available'],
+                    ),
+                    _buildListSection(
+                      'Precautions',
+                      recommendations['Precautions'] ??
+                          ['No precautions available'],
+                    ),
+                    _buildListSection(
+                      'Diet Plan',
+                      recommendations['Diet'] ?? ['No diet plan available'],
+                    ),
+                    _buildListSection(
+                      'Workout Suggestions',
+                      recommendations['Workout'] ??
+                          ['No workout suggestions available'],
+                    ),
+                    _buildDisclaimer(),
+                  ],
+                ),
+              ),
             ),
           ),
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(kDefaultPadding),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                _buildPredictionCard(disease, confidence),
-                if (topPredictions.length > 1)
-                  _buildOtherConditions(topPredictions),
-                _buildSection(
-                    'Your Symptoms', symptoms), // Single string section
-                _buildListSection(
-                  'Recommended Medicines',
-                  recommendations['Medicines'] ??
-                      ['No recommendations available'],
-                ),
-                _buildListSection(
-                  'Precautions',
-                  recommendations['Precautions'] ??
-                      ['No precautions available'],
-                ),
-                _buildListSection(
-                  'Diet Plan',
-                  recommendations['Diet'] ?? ['No diet plan available'],
-                ),
-                _buildListSection(
-                  'Workout Suggestions',
-                  recommendations['Workout'] ??
-                      ['No workout suggestions available'],
-                ),
-                _buildDisclaimer(),
-                _buildActionButtons(context),
-              ],
-            ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+            child: _buildActionButtons(context),
           ),
-        ));
+        ],
+      ),
+    );
   }
 
   Widget _buildPredictionCard(String disease, double confidence) {
