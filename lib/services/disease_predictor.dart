@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:tflite_flutter/tflite_flutter.dart';
-import 'package:http/http.dart' as http;
 import 'model_helper.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:flutter/foundation.dart';
