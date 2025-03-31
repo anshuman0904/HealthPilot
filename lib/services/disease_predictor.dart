@@ -114,7 +114,7 @@ class DiseasePredictor {
         1. output should be in the format of list of items in square brackets.
         2. in Recommended Medicine give name of medicines to be taken along with recommended schedule , like two times a day etc.
         3. Respond ONLY in this format with short sentences strictly without introductions and disclaimers.
-        4. do not forget to add newline character '\n' at end of each list item except the last one.
+        4. do not forget to add newline character '\n' at end of each list item except the last one , do not use comma to seperate list items.
       """)
       ];
 
