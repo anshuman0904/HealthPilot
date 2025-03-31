@@ -131,7 +131,7 @@ class SkinPredResultScreen extends StatelessWidget {
                               const SizedBox(width: 10),
                               const Expanded(
                                 child: Text(
-                                  "This is an AI-powered prediction. Please consult a healthcare professional for proper diagnosis.",
+                                  "This is an ML-powered prediction. Please consult a healthcare professional for proper diagnosis.",
                                   style: TextStyle(
                                     color: Color(0xFF558B2F),
                                     fontSize: 13,

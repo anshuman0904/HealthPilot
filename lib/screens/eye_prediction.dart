@@ -20,6 +20,7 @@ class _EyePredictionScreenState extends State<EyePredictionScreen> {
   XFile? _image;
   bool _isLoading = false;
   bool _showImageSourceOptions = false;
+  String? fetchedUrl;
 
   Future<void> _pickImage(ImageSource source) async {
     setState(() {
@@ -56,6 +57,30 @@ class _EyePredictionScreenState extends State<EyePredictionScreen> {
     );
   }
 
+  Future<void> fetchUrl() async {
+    try {
+      // Step 1: Fetch the URL from the Gist
+      final response = await http
+          .get(Uri.parse("https://anshumansinha.pythonanywhere.com/fetch"));
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = jsonDecode(response.body);
+        fetchedUrl = data["stored_string"]; // Extract URL
+
+        print("Url: $fetchedUrl");
+
+        print("Url: $fetchedUrl");
+      } else {
+        throw Exception("Failed to fetch URL");
+      }
+    } catch (e) {
+      print("Error: $e");
+      setState(() {
+        fetchedUrl = "Error fetching URL";
+      });
+    }
+  }
+
   Future<void> _uploadImage() async {
     if (_image == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -72,9 +97,11 @@ class _EyePredictionScreenState extends State<EyePredictionScreen> {
       _isLoading = true;
     });
 
+    await fetchUrl();
+
     var request = http.MultipartRequest(
       'POST',
-      Uri.parse('https://2125-103-237-156-11.ngrok-free.app/predict_eye'),
+      Uri.parse('$fetchedUrl/predict_eye'),
     );
 
     request.files.add(await http.MultipartFile.fromPath(

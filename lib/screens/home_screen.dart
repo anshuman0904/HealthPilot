@@ -25,21 +25,33 @@ class HomeScreen extends StatelessWidget {
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(kDefaultPadding),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SizedBox(height: 40),
-                _buildLogo(),
-                const SizedBox(height: 30),
-                _buildTitle(),
-                const SizedBox(height: 16),
-                _buildDescription(),
-                const SizedBox(height: 40),
-                _buildPredictionSections(context),
-                const Spacer(),
-                _buildDisclaimer(),
-                const SizedBox(height: 20),
-              ],
+            child: SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: MediaQuery.of(context).size.height -
+                      MediaQuery.of(context).padding.top -
+                      MediaQuery.of(context).padding.bottom -
+                      (kDefaultPadding * 2),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const SizedBox(height: 20),
+                    _buildLogo(),
+                    const SizedBox(height: 20),
+                    _buildTitle(),
+                    const SizedBox(height: 16),
+                    _buildDescription(),
+                    const SizedBox(height: 40),
+                    _buildPredictionSections(context),
+                    const SizedBox(
+                        height: 40), // Replaced Spacer with fixed height
+                    _buildDisclaimer(),
+                    const SizedBox(height: 20),
+                  ],
+                ),
+              ),
             ),
           ),
         ),
@@ -87,7 +99,7 @@ class HomeScreen extends StatelessWidget {
 
   Widget _buildDescription() {
     return const Text(
-      'AI-powered disease prediction at your fingertips',
+      'ML-powered disease prediction at your fingertips',
       style: TextStyle(
         fontSize: 16,
         color: kLightTextColor,

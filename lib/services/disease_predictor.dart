@@ -94,6 +94,7 @@ class DiseasePredictor {
   Future<Map<String, dynamic>> getAdditionalDetails(
       String disease, String symptoms) async {
     const String apiKey = 'AIzaSyA4ZZBSycwHtvnHMviFXapRLTLg9sG4GyA';
+    print('calling gemini api');
 
     try {
       final model = GenerativeModel(model: 'gemini-2.0-flash', apiKey: apiKey);
@@ -114,7 +115,7 @@ class DiseasePredictor {
         1. output should be in the format of list of items in square brackets.
         2. in Recommended Medicine give name of medicines to be taken along with recommended schedule , like two times a day etc.
         3. Respond ONLY in this format with short sentences strictly without introductions and disclaimers.
-        4. do not forget to add newline character '\n' at end of each list item except the last one , do not use comma to seperate list items.
+        4. do not forget to add newline character '\n' at end of each list item 'except the last one' , do not use comma to seperate list items.
       """)
       ];
 
