@@ -1,5 +1,9 @@
+import 'dart:convert';
 import 'package:tflite_flutter/tflite_flutter.dart';
+import 'package:http/http.dart' as http;
 import 'model_helper.dart';
+import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:flutter/foundation.dart';
 
 class DiseasePredictor {
   late Interpreter _interpreter;
@@ -41,10 +45,8 @@ class DiseasePredictor {
       var outputSize = outputShape[1]; // Number of classes
 
       // Prepare output container
-      var output = List<List<double>>.filled(
-          1,
-          List<double>.filled(outputSize, 0)
-      );
+      var output =
+          List<List<double>>.filled(1, List<double>.filled(outputSize, 0));
 
       // Run inference
       _interpreter.run(input, output);
@@ -65,7 +67,8 @@ class DiseasePredictor {
       List<double> probabilities = List<double>.from(output[0]);
 
       for (int i = 0; i < 3; i++) {
-        int maxIdx = probabilities.indexOf(probabilities.reduce((a, b) => a > b ? a : b));
+        int maxIdx = probabilities
+            .indexOf(probabilities.reduce((a, b) => a > b ? a : b));
         double confidence = probabilities[maxIdx];
         if (maxIdx < _modelHelper.labels.length && confidence > 0) {
           topPredictions.add({
@@ -86,6 +89,84 @@ class DiseasePredictor {
       print('Error during prediction: $e');
       rethrow;
     }
+  }
+
+  Future<Map<String, dynamic>> getAdditionalDetails(
+      String disease, String symptoms) async {
+    const String apiKey = 'AIzaSyA4ZZBSycwHtvnHMviFXapRLTLg9sG4GyA';
+    print('calling gemini api');
+
+    try {
+      final model = GenerativeModel(model: 'gemini-2.0-flash', apiKey: apiKey);
+      final content = [
+        Content.text("""
+        You are a medical assistant. Provide structured information about "$disease" having symptoms "$symptoms".:
+
+        "\n\nInclude:"
+        "\n1. Recommended Medicine"
+        "\n2. Precautions"
+        "\n3. Diet plan"
+        "\n4. Workout recommendations"
+        "\n\nFormat output as:"
+        "\nRecommended Medicine: [list]"
+        "\nPrecautions: [list]"
+        "\nDiet: [list]"
+        "\nWorkout: [list]"
+        1. output should be in the format of list of items in square brackets.
+        2. in Recommended Medicine give name of medicines to be taken along with recommended schedule , like two times a day etc.
+        3. Respond ONLY in this format with short sentences strictly without introductions and disclaimers.
+        4. do not forget to add newline character '\n' at end of each list item 'except the last one' , do not use comma to seperate list items.
+      """)
+      ];
+
+      final response = await model.generateContent(content);
+
+      debugPrint("✅ Raw Response from Gemini: ${response.text}",
+          wrapWidth: 10000);
+
+      if (response.text != null && response.text!.isNotEmpty) {
+        // Parse the response into a structured map
+        return _parseResponse(response.text!);
+      } else {
+        return {"error": "No recommendations available."};
+      }
+    } catch (e) {
+      debugPrint("✅ Raw Response from Gemini: ${e.toString()}",
+          wrapWidth: 10000);
+
+      return {"error": "Network error: ${e.toString()}"};
+    }
+  }
+
+  Map<String, dynamic> _parseResponse(String rawResponse) {
+    final Map<String, dynamic> parsedResponse = {};
+
+    // Extract sections using regular expressions
+    final medicineMatch =
+        RegExp(r'Recommended Medicine:\s*\[(.*?)\]', dotAll: true)
+            .firstMatch(rawResponse);
+    final precautionsMatch = RegExp(r'Precautions:\s*\[(.*?)\]', dotAll: true)
+        .firstMatch(rawResponse);
+    final dietMatch =
+        RegExp(r'Diet:\s*\[(.*?)\]', dotAll: true).firstMatch(rawResponse);
+    final workoutMatch =
+        RegExp(r'Workout:\s*\[(.*?)\]', dotAll: true).firstMatch(rawResponse);
+
+    // Split extracted sections into lists of items
+    parsedResponse['Medicines'] = medicineMatch != null
+        ? medicineMatch.group(1)?.split('\n').map((e) => e.trim()).toList()
+        : ['No data available'];
+    parsedResponse['Precautions'] = precautionsMatch != null
+        ? precautionsMatch.group(1)?.split('\n').map((e) => e.trim()).toList()
+        : ['No data available'];
+    parsedResponse['Diet'] = dietMatch != null
+        ? dietMatch.group(1)?.split('\n').map((e) => e.trim()).toList()
+        : ['No data available'];
+    parsedResponse['Workout'] = workoutMatch != null
+        ? workoutMatch.group(1)?.split('\n').map((e) => e.trim()).toList()
+        : ['No data available'];
+
+    return parsedResponse;
   }
 
   void dispose() {
