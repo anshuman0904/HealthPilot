@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 
 class ModelHelper {
-  late Map<String, dynamic> tfidfVocab;
+  late Map<String, int> tfidfVocab;  // Mapping words to indices
   late List<String> labels;
   bool _isInitialized = false;
 
@@ -14,22 +14,24 @@ class ModelHelper {
       final String vocabString = await rootBundle.loadString('assets/tfidf_vocab.json');
       final dynamic vocabData = json.decode(vocabString);
 
-      // Convert to the expected format
-      tfidfVocab = {};
-      if (vocabData is Map) {
-        vocabData.forEach((key, value) {
-          if (value is Map) {
-            tfidfVocab[key] = value;
-          } else {
-            // Handle case where value might be just an index
-            tfidfVocab[key] = {'index': value, 'idf': 1.0};
-          }
-        });
+      // Ensure vocabData is a Map of strings to integers (word -> index)
+      if (vocabData is Map<String, dynamic>) {
+        tfidfVocab = Map<String, int>.from(vocabData);
+      } else {
+        throw Exception("TF-IDF vocab data is not in expected format (Map).");
       }
 
       // Load disease labels
       final String labelsString = await rootBundle.loadString('assets/labels.json');
-      labels = List<String>.from(json.decode(labelsString));
+      final dynamic labelsData = json.decode(labelsString);
+
+      // Ensure labelsData is a Map with integer keys (as strings) and string values
+      if (labelsData is Map<String, dynamic>) {
+        // Convert the map values to a list of strings
+        labels = labelsData.values.cast<String>().toList();
+      } else {
+        throw Exception("Labels data is not in expected format (Map).");
+      }
 
       _isInitialized = true;
     } catch (e) {
@@ -54,11 +56,10 @@ class ModelHelper {
     // Fill the vector based on words in the input text
     for (var word in words) {
       if (tfidfVocab.containsKey(word)) {
-        final index = tfidfVocab[word]['index'] as int;
-        final idfValue = tfidfVocab[word]['idf'] as double? ?? 1.0;
-
+        final index = tfidfVocab[word]!;
+        // Increment the value at the corresponding index
         if (index < vector.length) {
-          vector[index] += 1.0 * idfValue; // TF * IDF
+          vector[index] += 1.0;  // Simple count-based vectorization (TF)
         }
       }
     }
