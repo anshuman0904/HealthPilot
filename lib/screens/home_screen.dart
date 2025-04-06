@@ -4,6 +4,8 @@ import '../utils/constants.dart';
 import 'disease_prediction.dart';
 import 'skin_prediction.dart';
 import 'eye_prediction.dart';
+import 'diabetes_assessment.dart';
+import 'lungCancer_assessment.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -138,9 +140,28 @@ class HomeScreen extends StatelessWidget {
           Colors.purple.shade100,
           const EyePredictionScreen(),
         ),
+        const SizedBox(height: 16),
+        _buildPredictionCard(
+          context,
+          'Diabetes Risk Assessment',
+          Icons.bloodtype,
+          'Assess your risk for diabetes using AI analysis',
+          Colors.orange.shade100,
+          const DiabetesRiskAssessmentScreen(),
+        ),
+        // const SizedBox(height: 16),
+        // _buildPredictionCard(
+        //   context,
+        //   'Lung Cancer Risk Assessment',
+        //   Icons.smoke_free,
+        //   'Evaluate your risk for lung cancer using AI analysis',
+        //   Colors.red.shade100,
+        //   const LungCancerRiskAssessmentScreen(),
+        // ),
       ],
     );
   }
+}
 
   Widget _buildPredictionCard(BuildContext context, String title, IconData icon,
       String description, Color cardColor, Widget screen) {
@@ -239,4 +260,3 @@ class HomeScreen extends StatelessWidget {
       ),
     );
   }
-}

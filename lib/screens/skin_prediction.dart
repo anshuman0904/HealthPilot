@@ -6,7 +6,6 @@ import 'dart:convert';
 import 'dart:io';
 import '../utils/constants.dart';
 import 'package:dotted_border/dotted_border.dart';
-import 'package:lottie/lottie.dart';
 
 class SkinPredictionScreen extends StatefulWidget {
   const SkinPredictionScreen({super.key});

@@ -68,8 +68,6 @@ class _EyePredictionScreenState extends State<EyePredictionScreen> {
         fetchedUrl = data["stored_string"]; // Extract URL
 
         print("Url: $fetchedUrl");
-
-        print("Url: $fetchedUrl");
       } else {
         throw Exception("Failed to fetch URL");
       }
