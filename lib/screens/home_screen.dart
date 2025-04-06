@@ -1,4 +1,3 @@
-import 'package:HealthPilot/screens/skin_prediction_result.dart';
 import 'package:flutter/material.dart';
 import '../utils/constants.dart';
 import 'disease_prediction.dart';
@@ -125,6 +124,24 @@ class HomeScreen extends StatelessWidget {
         const SizedBox(height: 16),
         _buildPredictionCard(
           context,
+          'Diabetes Risk Assessment',
+          Icons.bloodtype,
+          'Assess your risk for diabetes using AI analysis',
+          Colors.orange.shade100,
+          const DiabetesRiskAssessmentScreen(),
+        ),
+        const SizedBox(height: 16),
+        _buildPredictionCard(
+          context,
+          'Lung Cancer Risk Assessment',
+          Icons.smoke_free,
+          'Evaluate your risk for lung cancer using AI analysis',
+          Colors.red.shade100,
+          const LungCancerRiskAssessmentScreen(),
+        ),
+        const SizedBox(height: 16),
+        _buildPredictionCard(
+          context,
           'Skin Disease Prediction',
           Icons.face,
           'Upload skin photos for AI analysis',
@@ -140,24 +157,6 @@ class HomeScreen extends StatelessWidget {
           Colors.purple.shade100,
           const EyePredictionScreen(),
         ),
-        const SizedBox(height: 16),
-        _buildPredictionCard(
-          context,
-          'Diabetes Risk Assessment',
-          Icons.bloodtype,
-          'Assess your risk for diabetes using AI analysis',
-          Colors.orange.shade100,
-          const DiabetesRiskAssessmentScreen(),
-        ),
-        // const SizedBox(height: 16),
-        // _buildPredictionCard(
-        //   context,
-        //   'Lung Cancer Risk Assessment',
-        //   Icons.smoke_free,
-        //   'Evaluate your risk for lung cancer using AI analysis',
-        //   Colors.red.shade100,
-        //   const LungCancerRiskAssessmentScreen(),
-        // ),
       ],
     );
   }
